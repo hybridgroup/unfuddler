@@ -13,5 +13,9 @@ class TestUnfuddler < Test::Unit::TestCase
       ticket = @project.tickets.first
       assert ticket.is_a?(Unfuddler::Ticket)
     end
+
+    should "have an account id" do
+      assert_not_nil @project.account_id
+    end
   end
 end
