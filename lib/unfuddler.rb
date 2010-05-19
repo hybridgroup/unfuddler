@@ -1,7 +1,8 @@
 require 'hashie'
 require 'net/http'
 require 'crack/xml'
-require 'xmlsimple'
+require 'active_support'
+require 'active_support/core_ext/hash'
 
 module Unfuddler
   class << self
@@ -32,6 +33,10 @@ module Unfuddler
     def put(url, data)
       request(:put, url, data)
     end
+
+    def post(url, data)
+      request(:post, url, data)
+    end
   end
 
   class Project < Hashie::Mash
@@ -58,8 +63,13 @@ module Unfuddler
     end
 
     def save
-      ticket = XmlSimple.new("rootname" => "ticket")
-      Unfuddler.put("projects/#{project_id}/tickets/#{self.id}", ticket.xml_out(self.to_hash))
+      ticket = self.to_hash.to_xml(:root => "ticket")
+      Unfuddler.put("projects/#{project_id}/tickets/#{self.id}", ticket)
+    end
+
+    def create
+      ticket = self.to_hash.to_xml(:root => "ticket")
+      #Unfuddler.post("projects/#{project_id}/tickets", ticket)
     end
   end
 end
