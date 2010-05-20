@@ -88,3 +88,12 @@ module Unfuddler
     end
   end
 end
+
+include Unfuddler
+Unfuddler.authenticate(:username => "simon", :password => "WT00op", :subdomain => "ticketmaster")
+
+#p Project.find.first.ticket.create(:priority => "3", :summary => "Ohai", :description => "hi")
+#
+first = Project.find.first.tickets.first
+first.summary = "Cake"
+first.save
