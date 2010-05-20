@@ -25,8 +25,6 @@ module Unfuddler
       valid_codes = [201, 200, 302]
       raise "Server returned response code: " + response.code unless valid_codes.include?(response.code.to_i)
       Crack::XML.parse(response.body)
-    rescue
-      "Can't parse"
     end
 
     [:get, :put, :post, :delete].each do |method|
