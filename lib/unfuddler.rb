@@ -18,8 +18,11 @@ module Unfuddler
       request.basic_auth @username, @password
 
       request.body = data if data
+      handle_response(@http.request(request))
+    end
 
-      response = @http.request(request)
+    def handle_response(response)
+      raise "Server returned response code: " + response.code unless response.code == "200"
       Crack::XML.parse(response.body)
     end
 
@@ -63,9 +66,14 @@ module Unfuddler
       tickets
     end
 
-    def self.create(ticket, project_id)
-      ticket = ticket.to_xml(:root => "ticket")
-      Unfuddler.post("projects/#{project_id}/tickets", ticket)
+    def put
+      update = self.to_hash.to_xml(:root => "ticket")
+      Unfuddler.put("projects/#{self.project_id}/tickets/#{self.id}", update)
+    end
+
+    def create(project_id = nil)
+      ticket = self.to_hash.to_xml(:root => "ticket")
+      Unfuddler.post("projects/#{project_id or self.project_id}/tickets", ticket)
     end
 
     class Interacter
@@ -73,8 +81,9 @@ module Unfuddler
         @project_id = project_id
       end
 
-      def create(ticket)
-        Ticket.create(ticket, @project_id)
+      def create(ticket = {})
+        ticket = Ticket.new(ticket)
+        ticket.create(@project_id)
       end
     end
   end
