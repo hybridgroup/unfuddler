@@ -22,8 +22,11 @@ module Unfuddler
     end
 
     def handle_response(response)
-      raise "Server returned response code: " + response.code unless response.code == "200"
+      valid_codes = [201, 200, 302]
+      raise "Server returned response code: " + response.code unless valid_codes.include?(response.code.to_i)
       Crack::XML.parse(response.body)
+    rescue
+      "Can't parse"
     end
 
     def get(url)
@@ -36,6 +39,10 @@ module Unfuddler
 
     def post(url, data)
       request(:post, url, data)
+    end
+
+    def delete(url)
+      request(:delete, url)
     end
   end
 
@@ -76,6 +83,10 @@ module Unfuddler
       Unfuddler.post("projects/#{project_id or self.project_id}/tickets", ticket)
     end
 
+    def delete
+      Unfuddler.delete("projects/#{self.project_id}/tickets/#{self.id}")
+    end
+
     class Interacter
       def initialize(project_id)
         @project_id = project_id
@@ -88,12 +99,3 @@ module Unfuddler
     end
   end
 end
-
-include Unfuddler
-Unfuddler.authenticate(:username => "simon", :password => "WT00op", :subdomain => "ticketmaster")
-
-#p Project.find.first.ticket.create(:priority => "3", :summary => "Ohai", :description => "hi")
-#
-first = Project.find.first.tickets.first
-first.summary = "Cake"
-first.save

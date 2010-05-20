@@ -1,12 +1,10 @@
 require 'helper'
 
 class TestUnfuddler < Test::Unit::TestCase
-  context "a Unfuddler project instance" do
+  context "an Unfuddler project instance" do
     setup do
-      #Unfuddler.subdomain = ""
-      #Unfuddler.username = ""
-      #Unfuddler.password = ""
-      @project = Unfuddler::Project.find(:first)
+      #Unfuddler.authenticate(:username => "username", :password => "", :subdomain => "ticketmaster")
+      @project = Unfuddler::Project.find.first
     end
 
     should "find a ticket" do
@@ -14,8 +12,14 @@ class TestUnfuddler < Test::Unit::TestCase
       assert ticket.is_a?(Unfuddler::Ticket)
     end
 
-    should "have an account id" do
-      assert_not_nil @project.account_id
+    should "be able to create a ticket" do
+      # Should return an empty hash on success
+      assert @project.ticket.create(:priority => "3", :description => "This is a test ticket made by Unfuddler", :summary => "Test Ticket").empty?
+    end
+
+    should "be able to delete the newly created ticket, which should be the last one" do
+      # Should return an empty hash on success
+      assert @project.tickets.last.delete.empty?
     end
   end
 end
