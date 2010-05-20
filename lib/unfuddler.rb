@@ -13,14 +13,14 @@ module Unfuddler
       @http = Net::HTTP.new("#{@subdomain}.unfuddle.com", 80)
     end
 
-    #def request(type, url, data = nil)
     def request(type, url, data = nil)
       request = eval("Net::HTTP::#{type.capitalize}").new("/api/v1/#{url}", {'Content-type' => "application/xml"})
       request.basic_auth @username, @password
 
       request.body = data if data
 
-      @http.request(request)
+      response = @http.request(request)
+      Crack::XML.parse(response.body)
     end
 
     def get(url)
@@ -79,4 +79,3 @@ module Unfuddler
     end
   end
 end
-
