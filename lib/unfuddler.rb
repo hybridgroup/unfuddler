@@ -29,20 +29,10 @@ module Unfuddler
       "Can't parse"
     end
 
-    def get(url)
-      request(:get, url)
-    end
-
-    def put(url, data)
-      request(:put, url, data)
-    end
-
-    def post(url, data)
-      request(:post, url, data)
-    end
-
-    def delete(url)
-      request(:delete, url)
+    [:get, :put, :post, :delete].each do |method|
+      define_method(method) do |url, data = nil|
+        request(method, url, data)
+      end
     end
   end
 
