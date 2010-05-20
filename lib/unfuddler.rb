@@ -66,7 +66,7 @@ module Unfuddler
       tickets
     end
 
-    def put
+    def save
       update = self.to_hash.to_xml(:root => "ticket")
       Unfuddler.put("projects/#{self.project_id}/tickets/#{self.id}", update)
     end
@@ -88,3 +88,12 @@ module Unfuddler
     end
   end
 end
+
+include Unfuddler
+Unfuddler.authenticate(:username => "simon", :password => "WT00op", :subdomain => "ticketmaster")
+
+#p Project.find.first.ticket.create(:priority => "3", :summary => "Ohai", :description => "hi")
+#
+first = Project.find.first.tickets.first
+first.summary = "Cake"
+first.save
