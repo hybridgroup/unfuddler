@@ -10,20 +10,17 @@ module Unfuddler
 
     def authenticate(info)
       @username, @password, @subdomain = info[:username], info[:password], info[:subdomain]
-      @http = Net::HTTP.new("#{info[:subdomain]}.unfuddle.com")
+      @http = Net::HTTP.new("#{@subdomain}.unfuddle.com", 80)
     end
 
+    #def request(type, url, data = nil)
     def request(type, url, data = nil)
-      # Use Module#const_get (error before thus not using it now)
-      request = eval("Net::HTTP::#{type.capitalize}").new("/api/v1/#{url}.xml", {'Content-type:' => 'application/xml'})
+      request = eval("Net::HTTP::#{type.capitalize}").new("/api/v1/#{url}", {'Content-type' => "application/xml"})
       request.basic_auth @username, @password
 
-      if [:put, :post].include?(type) and data
-        request.body = data
-      end
+      request.body = data if data
 
-      response = @http.request(request)
-      Crack::XML.parse(response.body)
+      @http.request(request)
     end
 
     def get(url)
@@ -42,7 +39,7 @@ module Unfuddler
   class Project < Hashie::Mash
     def self.find
       projects = []
-      Unfuddler.get("projects")["projects"].each do |project|
+      Unfuddler.get("projects.xml")["projects"].each do |project|
         projects << Project.new(project)
       end
       projects
@@ -51,25 +48,35 @@ module Unfuddler
     def tickets
       Ticket.find(self.id)
     end
+
+    def ticket
+      Ticket::Interacter.new(self.id)
+    end
   end
 
   class Ticket < Hashie::Mash
     def self.find(project_id)
       tickets = []
-      Unfuddler.get("projects/#{project_id}/tickets")["tickets"].each do |project|
+      Unfuddler.get("projects/#{project_id}/tickets.xml")["tickets"].each do |project|
         tickets << Ticket.new(project)
       end
       tickets
     end
 
-    def save
-      ticket = self.to_hash.to_xml(:root => "ticket")
-      Unfuddler.put("projects/#{project_id}/tickets/#{self.id}", ticket)
+    def self.create(ticket, project_id)
+      ticket = ticket.to_xml(:root => "ticket")
+      Unfuddler.post("projects/#{project_id}/tickets", ticket)
     end
 
-    def create
-      ticket = self.to_hash.to_xml(:root => "ticket")
-      #Unfuddler.post("projects/#{project_id}/tickets", ticket)
+    class Interacter
+      def initialize(project_id)
+        @project_id = project_id
+      end
+
+      def create(ticket)
+        Ticket.create(ticket, @project_id)
+      end
     end
   end
 end
+
