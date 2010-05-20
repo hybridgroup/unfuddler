@@ -66,7 +66,7 @@ module Unfuddler
       tickets
     end
 
-    def put
+    def save
       update = self.to_hash.to_xml(:root => "ticket")
       Unfuddler.put("projects/#{self.project_id}/tickets/#{self.id}", update)
     end
