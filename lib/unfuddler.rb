@@ -93,6 +93,9 @@ module Unfuddler
     # Optional argument is what to update if the ticket object is not altered
     def save(update = nil)
       update = self.to_hash.to_xml(:root => "ticket") unless update
+
+    def save
+      update = self.to_hash.to_xml(:root => "ticket")
       Unfuddler.put("projects/#{self.project_id}/tickets/#{self.id}", update)
     end
     
