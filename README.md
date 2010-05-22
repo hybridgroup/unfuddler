@@ -4,10 +4,13 @@ Unfuddler is a simple Ruby API to Unfuddle's projects and tickets. Primarily mad
 
 ## Usage
 
-Unfuddler.subdomain = "mysubdomain"
-Unfuddler.username = "sirup"
-Unfuddler.password = "super-seekrit1!"
-Unfuddler::Project.find(:first).tickets
+		Unfuddler.authenticate(:username => "john", :password => "seekrit", :subdomain => "johnscompany")
+		# Project#find returns all projects, fetching last element from array with Array#last
+		project = Unfuddler.project.find.last
+		# Fetch all new tickets where the status is new
+		new_tickets = project.tickets.find(:status => "new")
+		# Close ticket with a resolution
+		new_tickets.first.close!(:resolution => "fixed", :description => "I fixed it!")
 
 ## Note on Patches/Pull Requests
  
