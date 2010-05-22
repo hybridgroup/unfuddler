@@ -43,8 +43,8 @@ module Unfuddler
       projects
     end
 
-    def tickets
-      Ticket.find(self.id)
+    def tickets(argument = nil)
+      Ticket.find(self.id, argument)
     end
 
     def ticket
@@ -53,22 +53,76 @@ module Unfuddler
   end
 
   class Ticket < Hashie::Mash
-    def self.find(project_id)
+    # Find tickets associated with a project.
+    #
+    # Required argument is project_id, which is the id
+    # of the project to search for tickets.
+    #
+    # Optional argument is argument, which searches the tickets
+    # to match the keys in the argument. e.g.
+    #   Ticket.find(:status => "new")
+    # Returns all tickets with status "new"
+    def self.find(project_id, arguments = nil)
       tickets = []
       Unfuddler.get("projects/#{project_id}/tickets.xml")["tickets"].each do |project|
         tickets << Ticket.new(project)
       end
+      
+      if arguments
+        specified_tickets = []
+        
+        # Check each ticket if all the expected values pass, return all
+        # tickets where everything passes in an array
+        tickets.each do |ticket|
+          matches = 0
+          arguments.each_pair do |method, expected_value|
+            matches += 1 if ticket.send(method) == expected_value
+          end
+          
+          specified_tickets << ticket if matches == arguments.length
+        end
+        
+        return specified_tickets
+      end
+
       tickets
     end
 
-    def save
-      update = self.to_hash.to_xml(:root => "ticket")
+    # Save ticket
+    #
+    # Optional argument is what to update if the ticket object is not altered
+    def save(update = nil)
+      update = self.to_hash.to_xml(:root => "ticket") unless update
       Unfuddler.put("projects/#{self.project_id}/tickets/#{self.id}", update)
     end
-
+    
+    # Create a ticket
+    #
+    # Optional argument is project_id
     def create(project_id = nil)
       ticket = self.to_hash.to_xml(:root => "ticket")
       Unfuddler.post("projects/#{project_id or self.project_id}/tickets", ticket)
+    end
+    
+    [:closed!, :new!, :unaccepted!, :reassigned!, :reopened!, :accepted!, :resolved!].each do |method|
+      # Fix method names, e.g. #reassigned! => #reassign!
+      length = method[0..-3] if method == :closed!
+      length = method[0..-2] if [:new!, :resolved!].include?(method)
+      
+      define_method((length || method[0..-4]) + "!") do |resolution|
+        name = method[0..-2] # No "!"
+        update = {:status => name}
+        
+        if resolution
+          # The API wants resolution-description for a resolutions description,
+          # to make it more user-friendly, we convert this automatically
+          resolution[:"resolution-description"] = resolution.delete(:description)
+          update.merge!(resolution)
+        end
+        
+        update = update.to_xml(:root => "ticket")
+        save(update)
+      end
     end
 
     def delete
