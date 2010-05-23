@@ -25,7 +25,8 @@ Gem::Specification.new do |s|
      "VERSION",
      "lib/unfuddler.rb",
      "test/helper.rb",
-     "test/test_unfuddler.rb"
+     "test/test_unfuddler.rb",
+     "unfuddler.gemspec"
   ]
   s.homepage = %q{http://github.com/Sirupsen/unfuddler}
   s.rdoc_options = ["--charset=UTF-8"]
