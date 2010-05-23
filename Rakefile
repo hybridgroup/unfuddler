@@ -5,13 +5,15 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "unfuddler"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Provides a simple Ruby API to Unfuddle.}
+    gem.description = %Q{Provides a simple Ruby API to Unfuddle.}
     gem.email = "sirup@sirupsen.dk"
     gem.homepage = "http://github.com/Sirupsen/unfuddler"
     gem.authors = ["Sirupsen"]
     gem.add_development_dependency "shoulda", ">= 0"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_dependency "hashie", ">= 0.2.0"
+    gem.add_dependency "crack", ">= 0.1.7"
+    gem.add_dependency "active_support", ">= 2.3.5"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
