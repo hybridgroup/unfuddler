@@ -12,8 +12,8 @@ begin
     gem.authors = ["Sirupsen"]
     gem.add_development_dependency "shoulda", ">= 0"
     gem.add_dependency "hashie", ">= 0.2.0"
-    gem.add_dependency "crack", ">= 0.1.7"
-    gem.add_dependency "active_support", ">= 2.3.5"
+    gem.add_dependency "crack", ">= 0.1.6"
+    gem.add_dependency "activesupport", ">= 2.3.5"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
