@@ -11,7 +11,7 @@ Now, find your project
 		project = Unfuddler.project.find.last
 
 Get ALL the tickets from this project, where the status is "new"
-		new_tickets = project.tickets.find(:status => "new")
+		new_tickets = project.tickets(:status => "new")
 
 Let's close the last of these tickets, with a resolution.
 		new_tickets.first.close!(:resolution => "fixed", :description => "I fixed it!")
