@@ -13,7 +13,7 @@ Now, find your project
 Get ALL the tickets from this project, where the status is "new"
 		new_tickets = project.tickets(:status => "new")
 
-Let's close the last of these tickets, with a resolution.
+Let's close the first of these tickets, with a resolution.
 		new_tickets.first.close!(:resolution => "fixed", :description => "I fixed it!")
 
 ## Note on Patches/Pull Requests
