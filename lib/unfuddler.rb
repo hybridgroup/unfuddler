@@ -112,7 +112,7 @@ module Unfuddler
       length = method[0..-3] if method == :closed!
       length = method[0..-2] if [:new!, :resolved!].include?(method)
       
-      define_method((length || method[0..-4]) + "!") do |resolution|
+      define_method((length || method[0..-4]) + "!") do |resolution = {}|
         name = method[0..-2] # No "!"
         update = {:status => name}
         
