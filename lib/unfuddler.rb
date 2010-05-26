@@ -6,7 +6,6 @@
   active_support/core_ext/hash
 }.each {|lib| require lib}
 
-
 module Unfuddler
   class << self
     attr_accessor :username, :password, :subdomain, :http
