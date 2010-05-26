@@ -12,7 +12,7 @@ module Unfuddler
     attr_accessor :username, :password, :subdomain, :http
 
     def authenticate(info)
-      @username, @password, @subdomain = info[:username], info[:password], info[:subdomain]
+      @username, @password, @subdomain = info[:username] || info["username"], info[:password] || info["password"], info[:subdomain] || info["subdomain"]
       @http = Net::HTTP.new("#{@subdomain}.unfuddle.com", 80)
     end
 
@@ -38,12 +38,25 @@ module Unfuddler
   end
 
   class Project < Hashie::Mash
-    def self.find
+    def self.find(name = nil)
       projects = []
       Unfuddler.get("projects.xml")["projects"].each do |project|
         projects << Project.new(project)
       end
+
+      if name 
+        right_project = nil
+        projects.each do |project|
+          right_project = project if project.short_name == name.to_s
+        end
+        return right_project
+      end
+
       projects
+    end
+
+    def self.[](name = nil)
+      self.find(name)
     end
 
     def tickets(argument = nil)

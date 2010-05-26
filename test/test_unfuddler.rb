@@ -1,14 +1,22 @@
 require 'helper'
 
 class TestUnfuddler < Test::Unit::TestCase
-  context "an Unfuddler project instance" do
+  context "an Unfuddler project" do
     setup do
-      Unfuddler.authenticate(:username => "", :password => "", :subdomain => "ticketmaster")
+      #Unfuddler.authenticate(:username => "john", :password => "", :subdomain => "ticketmaster")
       @project = Unfuddler::Project.find.first
     end
 
     should "be a project" do
       assert @project.is_a?(Unfuddler::Project)
+    end
+
+    should "find a project with name Test" do
+      assert_instance_of Unfuddler::Project, Unfuddler::Project.find("testproject")
+    end
+
+    should "find a project with name Test" do
+      assert_instance_of Unfuddler::Project, Unfuddler::Project["testproject"]
     end
 
     should "have authentication information" do
@@ -23,9 +31,21 @@ class TestUnfuddler < Test::Unit::TestCase
       assert tickets.last.is_a?(Unfuddler::Ticket)
     end
 
-    context "with a ticket instance" do
+    should "create a new ticket" do
+      assert @project.ticket.create(:priority => "3", :summary => "TestTicket", :description => "This is a description for a test ticket.").empty?
+    end
+
+    should "find tickets by summary and description" do
+      assert_instance_ofa Unfuddler::Ticket, @project.tickets.find(:summary => "TestTicket", :description => "This is a description for a test ticket.").first
+    end
+
+    context "with new ticket instance" do
       setup do
         @ticket = @project.tickets.last
+      end
+
+      should "have right summary" do
+        assert_equal "TestTicket", @ticket.summary
       end
 
       should "be a ticket" do
@@ -36,14 +56,14 @@ class TestUnfuddler < Test::Unit::TestCase
         assert @ticket.close!(:resolution => "fixed", :description => "Fixed it").empty?
       end
 
-      should "reopen the last ticket" do
-        assert @ticket.reopen!
+      should "have new resolution description" do
+        assert_equal "Fixed it", @ticket.resolution_description
       end
 
-      should "delete the last ticket" do
+      #should "delete the last ticket" do
         # Should return an empty hash on success
-        assert @ticket.delete.empty?
-      end
+      #  assert @ticket.delete.empty?
+      #end
     end
   end
 end
