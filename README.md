@@ -2,6 +2,14 @@
 
 Unfuddler is a simple Ruby API to Unfuddle's projects and tickets. Primarily made for [ticketmaster](http://github.com/Sirupsen/ticketmaster).
 
+## Installation
+
+The easiest way to install Unfuddler is via RubyGems:
+    # gem install unfuddler
+
+If you live on the edge, clone this repository and run:
+    # rake install
+
 ## Usage
 
 First of all, authentiate with your information:
