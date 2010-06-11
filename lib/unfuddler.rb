@@ -16,7 +16,7 @@ module Unfuddler
     end
 
     def request(type, url, data = nil)
-      request = eval("Net::HTTP::#{type.capitalize}").new("/api/v1/#{url}", {'Content-type' => "application/xml"})
+      request = eval("Net::HTTP::#{type.to_s.capitalize}").new("/api/v1/#{url}", {'Content-type' => "application/xml"})
       request.basic_auth @username, @password
 
       request.body = data if data
@@ -30,7 +30,9 @@ module Unfuddler
     end
 
     [:get, :put, :post, :delete].each do |method|
-      define_method(method) do |url, data = nil|
+      define_method(method) do |*args|
+        # Ruby 1.8 fix, in 1.9 we could just do define.. do |url, data = nil|
+        url, data = args
         request(method, url, data)
       end
     end
@@ -121,14 +123,15 @@ module Unfuddler
     
     [:closed!, :new!, :unaccepted!, :reassigned!, :reopened!, :accepted!, :resolved!].each do |method|
       # Fix method names, e.g. #reassigned! => #reassign!
-      length = method[0..-3] if method == :closed!
-      length = method[0..-2] if [:new!, :resolved!].include?(method)
+      length = method.to_s[0..-3] if method == :closed!
+      length = method.to_s[0..-2] if [:new!, :resolved!].include?(method)
       
-      define_method((length || method[0..-4]) + "!") do |resolution = {}|
-        name = method[0..-2] # No "!"
+      define_method((length || method.to_s[0..-4]) + "!") do |*args|
+        name = method.to_s[0..-2] # No "!"
         update = {:status => name}
-        
-        if resolution
+
+        resolution = args.first
+        unless resolution.empty?
           # The API wants resolution-description for a resolutions description,
           # to make it more user-friendly, we convert this automatically
           resolution[:"resolution-description"] = resolution.delete(:description)

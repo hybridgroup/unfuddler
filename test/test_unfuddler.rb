@@ -3,7 +3,7 @@ require 'helper'
 class TestUnfuddler < Test::Unit::TestCase
   context "an Unfuddler project" do
     setup do
-      #Unfuddler.authenticate(:username => "", :password => "", :subdomain => "ticketmaster")
+      Unfuddler.authenticate(:username => "", :password => "", :subdomain => "ticketmaster")
       @project = Unfuddler::Project.find.first
     end
 
