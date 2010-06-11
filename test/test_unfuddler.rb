@@ -3,7 +3,7 @@ require 'helper'
 class TestUnfuddler < Test::Unit::TestCase
   context "an Unfuddler project" do
     setup do
-      #Unfuddler.authenticate(:username => "john", :password => "", :subdomain => "ticketmaster")
+      #Unfuddler.authenticate(:username => "", :password => "", :subdomain => "ticketmaster")
       @project = Unfuddler::Project.find.first
     end
 
@@ -36,7 +36,7 @@ class TestUnfuddler < Test::Unit::TestCase
     end
 
     should "find tickets by summary and description" do
-      assert_instance_ofa Unfuddler::Ticket, @project.tickets.find(:summary => "TestTicket", :description => "This is a description for a test ticket.").first
+      assert_instance_of Unfuddler::Ticket, @project.tickets.find(:summary => "TestTicket", :description => "This is a description for a test ticket.").first
     end
 
     context "with new ticket instance" do

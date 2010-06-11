@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sirupsen"]
-  s.date = %q{2010-05-26}
+  s.date = %q{2010-05-27}
   s.description = %q{Provides a simple Ruby API to Unfuddle.}
   s.email = %q{sirup@sirupsen.dk}
   s.extra_rdoc_files = [
@@ -34,8 +34,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Provides a simple Ruby API to Unfuddle.}
   s.test_files = [
-    "test/test_unfuddler.rb",
-     "test/helper.rb"
+    "test/helper.rb",
+     "test/test_unfuddler.rb"
   ]
 
   if s.respond_to? :specification_version then
